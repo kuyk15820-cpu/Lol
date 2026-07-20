@@ -34,9 +34,17 @@
     if (self.navigationController) {
         self.navigationController.navigationBar.prefersLargeTitles = YES;
         self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAlways;
+        
+        // [แก้ไข] ล้างเอฟเฟกต์สีเทาโปร่งแสงที่ฝังมากับแถบ Navigation Bar ของระบบสไลด์
+        UINavigationBarAppearance *appearance = [[UINavigationBarAppearance alloc] init];
+        [appearance configureWithOpaqueBackground];
+        appearance.backgroundColor = [UIColor systemBackgroundColor]; // บังคับใช้สีระบบดั้งเดิม ขาว/ดำ
+        self.navigationController.navigationBar.standardAppearance = appearance;
+        self.navigationController.navigationBar.scrollEdgeAppearance = appearance;
+        self.navigationController.navigationBar.compactAppearance = appearance;
     }
     
-    // 1. ปรับสีพื้นหลังของ View หลักให้เป็นสีตามระบบ (Light = ขาว, Dark = ดำ)
+    // บังคับ View หลักให้เป็นสีดั้งเดิมตามระบบ (Light = ขาว, Dark = ดำ)
     self.view.backgroundColor = [UIColor systemBackgroundColor];
     
     _sectionTitles = @[
@@ -67,8 +75,9 @@
     
     self.tableView = [[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStyleInsetGrouped];
     
-    // 2. เปลี่ยนตรงนี้! ปรับพื้นหลังของ TableView ให้เป็นสีตามระบบแบบดั้งเดิมด้วย (แทนที่สีเทา Grouped เดิม)
-    self.tableView.backgroundColor = [UIColor systemBackgroundColor];
+    // [แก้ไข] ล้างสีพื้นหลัง TableView ให้โปร่งใส เพื่อให้สี systemBackgroundColor ของ View หลักทำงาน
+    self.tableView.backgroundColor = [UIColor clearColor];
+    self.tableView.backgroundView = nil;
     
     self.tableView.separatorColor = [UIColor separatorColor];
     self.tableView.translatesAutoresizingMaskIntoConstraints = NO;
