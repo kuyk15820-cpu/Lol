@@ -108,17 +108,36 @@
     }
 }
 
-// Action เมื่อผู้ใช้แตะปุ่ม Info ขวาบน
 - (void)infoButtonTapped {
-    // เปลี่ยนมาใช้งานและเปิดหน้า SettingsViewController ดั้งเดิมตามคำสั่ง
     SettingsViewController *settingsVC = [[SettingsViewController alloc] init];
-    if (self.navigationController) {
-        [self.navigationController pushViewController:settingsVC animated:YES];
+    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:settingsVC];
+    
+    // 1. ตั้งค่าสไตล์การ Present เป็นแบบ PageSheet ก่อน
+    navController.modalPresentationStyle = UIModalPresentationPageSheet;
+    
+    // 2. ดึง Sheet Presentation Controller ออกมาตั้งค่า (รองรับ iOS 15+)
+    if (@available(iOS 15.0, *)) {
+        UISheetPresentationController *sheet = navController.sheetPresentationController;
+        if (sheet) {
+            // กำหนดขนาด: มีทั้งแบบครึ่งจอ (medium) และเต็มจอ (large) เพื่อให้ผู้ใช้ลากพับขึ้นลงได้
+            sheet.detents = @[
+                [UISheetPresentationControllerDetent mediumDetent],
+                [UISheetPresentationControllerDetent largeDetent]
+            ];
+            
+            // เพิ่มขีดตรงกลางด้านบน (Grabber) ให้ผู้ใช้รู้ว่าลากพับลงได้
+            sheet.prefersGrabberVisible = YES;
+            
+            // ปรับมุมโค้งของขอบจอให้ดู Smooth (เลือกปรับตามใจชอบ)
+            sheet.preferredCornerRadius = 24.0;
+        }
     } else {
-        UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:settingsVC];
-        navController.modalPresentationStyle = UIModalPresentationFullScreen;
-        [self presentViewController:navController animated:YES completion:nil];
+        // Fallback สำหรับ iOS ที่ต่ำกว่า 15 (จะแสดงผลเป็น FormSheet/PageSheet ปกติ)
+        navController.modalPresentationStyle = UIModalPresentationFormSheet;
     }
+    
+    // 3. สั่ง Present หน้าจอ
+    [self presentViewController:navController animated:YES completion:nil];
 }
 
 - (void)setupData {
