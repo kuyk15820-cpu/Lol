@@ -29,22 +29,21 @@
     self.navigationController.navigationBar.topItem.backBarButtonItem = backButton;
     self.navigationController.navigationBar.tintColor = [UIColor whiteColor];
 
-    // ตั้งค่า Title ให้เป็นอักษรตัวใหญ่ชิดซ้ายบน (Large Title)
+    // ตั้งค่า Title ให้เป็นอักษรตัวใหญ่ชิดซ้ายบน
     self.title = [NSString stringWithUTF8String:AY_OBFUSCATE("Info")];
     if (self.navigationController) {
         self.navigationController.navigationBar.prefersLargeTitles = YES;
         self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAlways;
         
-        // [แก้ไข] ล้างเอฟเฟกต์สีเทาโปร่งแสงที่ฝังมากับแถบ Navigation Bar ของระบบสไลด์
+        // บังคับให้แถบบาร์ด้านบนใช้สีระบบปกติ ไม่ให้โปร่งแสงจนเห็นสีเทาของ Sheet ด้านหลัง
         UINavigationBarAppearance *appearance = [[UINavigationBarAppearance alloc] init];
         [appearance configureWithOpaqueBackground];
-        appearance.backgroundColor = [UIColor systemBackgroundColor]; // บังคับใช้สีระบบดั้งเดิม ขาว/ดำ
+        appearance.backgroundColor = [UIColor systemBackgroundColor];
         self.navigationController.navigationBar.standardAppearance = appearance;
         self.navigationController.navigationBar.scrollEdgeAppearance = appearance;
-        self.navigationController.navigationBar.compactAppearance = appearance;
     }
     
-    // บังคับ View หลักให้เป็นสีดั้งเดิมตามระบบ (Light = ขาว, Dark = ดำ)
+    // บังคับให้ View หลักใช้สีระบบดั้งเดิม (ขาว/ดำ) แบบเดียวกับที่โค้ด Swift บังคับ view.backgroundColor
     self.view.backgroundColor = [UIColor systemBackgroundColor];
     
     _sectionTitles = @[
@@ -57,7 +56,6 @@
     NSString *bundleID = [[NSBundle mainBundle] bundleIdentifier] ?: @"com.example.app";
     NSString *version = [infoPlist objectForKey:@"CFBundleShortVersionString"] ?: @"1.0";
     
-    // ดึงวันเวลาคอมไพล์จาก Compiler Macro มาตรฐานอัตโนมัติ
     NSString *compileDate = [NSString stringWithUTF8String:__DATE__]; 
     NSString *compileTime = [NSString stringWithUTF8String:__TIME__]; 
     NSString *buildTimeStr = [NSString stringWithFormat:@"%@ %@", compileDate, compileTime];
@@ -73,11 +71,15 @@
         ]
     };
     
-    self.tableView = [[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStyleInsetGrouped];
+    // แก้ไขจุดนี้: ใช้การอินิทรูปแบบเดียวกับ Swift สไตล์ .insetGrouped
+    self.tableView = [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStyleInsetGrouped];
     
-    // [แก้ไข] ล้างสีพื้นหลัง TableView ให้โปร่งใส เพื่อให้สี systemBackgroundColor ของ View หลักทำงาน
-    self.tableView.backgroundColor = [UIColor clearColor];
-    self.tableView.backgroundView = nil;
+    // บังคับย้อมสีพื้นหลัง TableView ให้ตรงกับสี View หลักดั้งเดิม 
+    self.tableView.backgroundColor = [UIColor systemBackgroundColor];
+    
+    // เคลียร์เอฟเฟกต์ BackgroundView ที่ติดมากับระบบ Sheet ทิ้งไป
+    self.tableView.backgroundView = [[UIView alloc] init];
+    self.tableView.backgroundView.backgroundColor = [UIColor systemBackgroundColor];
     
     self.tableView.separatorColor = [UIColor separatorColor];
     self.tableView.translatesAutoresizingMaskIntoConstraints = NO;
