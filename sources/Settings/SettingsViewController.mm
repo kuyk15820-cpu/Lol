@@ -36,6 +36,7 @@
         self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAlways;
     }
     
+    // 1. ปรับสีพื้นหลังของ View หลักให้เป็นสีตามระบบ (Light = ขาว, Dark = ดำ)
     self.view.backgroundColor = [UIColor systemBackgroundColor];
     
     _sectionTitles = @[
@@ -49,13 +50,12 @@
     NSString *version = [infoPlist objectForKey:@"CFBundleShortVersionString"] ?: @"1.0";
     
     // ดึงวันเวลาคอมไพล์จาก Compiler Macro มาตรฐานอัตโนมัติ
-    NSString *compileDate = [NSString stringWithUTF8String:__DATE__]; // ได้รูปแบบเช่น Nov 20 2024
-    NSString *compileTime = [NSString stringWithUTF8String:__TIME__]; // ได้รูปแบบเช่น 18:01:18
+    NSString *compileDate = [NSString stringWithUTF8String:__DATE__]; 
+    NSString *compileTime = [NSString stringWithUTF8String:__TIME__]; 
     NSString *buildTimeStr = [NSString stringWithFormat:@"%@ %@", compileDate, compileTime];
     
     NSString *fullVersion = [NSString stringWithFormat:@"v%@ (%@)", version, buildTimeStr];
     
-    // ยุบข้อมูลของเซกชันแรกเหลือ Dictionary ชุดเดียวใน Array เพื่อให้วาดออกมาเพียงช่องเดียว
     _tableData = @{
         [NSString stringWithUTF8String:AY_OBFUSCATE("ABOUT")]: @[
             @{@"title": appName, @"bundle": bundleID, @"version": fullVersion, @"build_time": buildTimeStr}
@@ -66,7 +66,10 @@
     };
     
     self.tableView = [[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStyleInsetGrouped];
-    self.tableView.backgroundColor = [UIColor systemGroupedBackgroundColor];
+    
+    // 2. เปลี่ยนตรงนี้! ปรับพื้นหลังของ TableView ให้เป็นสีตามระบบแบบดั้งเดิมด้วย (แทนที่สีเทา Grouped เดิม)
+    self.tableView.backgroundColor = [UIColor systemBackgroundColor];
+    
     self.tableView.separatorColor = [UIColor separatorColor];
     self.tableView.translatesAutoresizingMaskIntoConstraints = NO;
     self.tableView.delegate = self;
