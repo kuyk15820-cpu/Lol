@@ -29,7 +29,13 @@
     self.navigationController.navigationBar.topItem.backBarButtonItem = backButton;
     self.navigationController.navigationBar.tintColor = [UIColor whiteColor];
 
+    // ตั้งค่า Title ให้เป็นอักษรตัวใหญ่ชิดซ้ายบน (Large Title)
     self.title = [NSString stringWithUTF8String:AY_OBFUSCATE("Info")];
+    if (self.navigationController) {
+        self.navigationController.navigationBar.prefersLargeTitles = YES;
+        self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAlways;
+    }
+    
     self.view.backgroundColor = [UIColor systemBackgroundColor];
     
     _sectionTitles = @[
