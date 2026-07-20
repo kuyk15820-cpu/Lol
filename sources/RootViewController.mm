@@ -112,27 +112,31 @@
     SettingsViewController *settingsVC = [[SettingsViewController alloc] init];
     UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:settingsVC];
     
-    // 1. ตั้งค่าสไตล์การ Present เป็นแบบ PageSheet ก่อน
+    // 1. ตั้งค่าสไตล์การ Present เป็นแบบ PageSheet
     navController.modalPresentationStyle = UIModalPresentationPageSheet;
+    
+    // [จุดสำคัญที่ต้องเพิ่ม] บังคับให้ View ของ NavigationController (ตัวแม่) 
+    // ใช้สีระบบดั้งเดิม (ขาว/ดำ) เพื่อไม่ให้สีเทาของระบบ Sheet ทะลุออกมาข้างหลัง TableView
+    navController.view.backgroundColor = [UIColor systemBackgroundColor];
     
     // 2. ดึง Sheet Presentation Controller ออกมาตั้งค่า (รองรับ iOS 15+)
     if (@available(iOS 15.0, *)) {
         UISheetPresentationController *sheet = navController.sheetPresentationController;
         if (sheet) {
-            // กำหนดขนาด: มีทั้งแบบครึ่งจอ (medium) และเต็มจอ (large) เพื่อให้ผู้ใช้ลากพับขึ้นลงได้
+            // กำหนดขนาด: มีทั้งแบบครึ่งจอ (medium) และเต็มจอ (large)
             sheet.detents = @[
                 [UISheetPresentationControllerDetent mediumDetent],
                 [UISheetPresentationControllerDetent largeDetent]
             ];
             
-            // เพิ่มขีดตรงกลางด้านบน (Grabber) ให้ผู้ใช้รู้ว่าลากพับลงได้
+            // เพิ่มขีดตรงกลางด้านบน (Grabber)
             sheet.prefersGrabberVisible = YES;
             
-            // ปรับมุมโค้งของขอบจอให้ดู Smooth (เลือกปรับตามใจชอบ)
+            // ปรับมุมโค้งของขอบจอให้ดู Smooth
             sheet.preferredCornerRadius = 24.0;
         }
     } else {
-        // Fallback สำหรับ iOS ที่ต่ำกว่า 15 (จะแสดงผลเป็น FormSheet/PageSheet ปกติ)
+        // Fallback สำหรับ iOS ที่ต่ำกว่า 15
         navController.modalPresentationStyle = UIModalPresentationFormSheet;
     }
     
