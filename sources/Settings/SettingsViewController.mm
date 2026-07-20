@@ -29,21 +29,13 @@
     self.navigationController.navigationBar.topItem.backBarButtonItem = backButton;
     self.navigationController.navigationBar.tintColor = [UIColor whiteColor];
 
-    // ตั้งค่า Title ให้เป็นอักษรตัวใหญ่ชิดซ้ายบน
+    // ตั้งค่า Title ให้เป็นอักษรตัวใหญ่ชิดซ้ายบน (Large Title)
     self.title = [NSString stringWithUTF8String:AY_OBFUSCATE("Info")];
     if (self.navigationController) {
         self.navigationController.navigationBar.prefersLargeTitles = YES;
         self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAlways;
-        
-        // บังคับให้แถบบาร์ด้านบนใช้สีระบบปกติ ไม่ให้โปร่งแสงจนเห็นสีเทาของ Sheet ด้านหลัง
-        UINavigationBarAppearance *appearance = [[UINavigationBarAppearance alloc] init];
-        [appearance configureWithOpaqueBackground];
-        appearance.backgroundColor = [UIColor systemBackgroundColor];
-        self.navigationController.navigationBar.standardAppearance = appearance;
-        self.navigationController.navigationBar.scrollEdgeAppearance = appearance;
     }
     
-    // บังคับให้ View หลักใช้สีระบบดั้งเดิม (ขาว/ดำ) แบบเดียวกับที่โค้ด Swift บังคับ view.backgroundColor
     self.view.backgroundColor = [UIColor systemBackgroundColor];
     
     _sectionTitles = @[
@@ -56,12 +48,14 @@
     NSString *bundleID = [[NSBundle mainBundle] bundleIdentifier] ?: @"com.example.app";
     NSString *version = [infoPlist objectForKey:@"CFBundleShortVersionString"] ?: @"1.0";
     
-    NSString *compileDate = [NSString stringWithUTF8String:__DATE__]; 
-    NSString *compileTime = [NSString stringWithUTF8String:__TIME__]; 
+    // ดึงวันเวลาคอมไพล์จาก Compiler Macro มาตรฐานอัตโนมัติ
+    NSString *compileDate = [NSString stringWithUTF8String:__DATE__]; // ได้รูปแบบเช่น Nov 20 2024
+    NSString *compileTime = [NSString stringWithUTF8String:__TIME__]; // ได้รูปแบบเช่น 18:01:18
     NSString *buildTimeStr = [NSString stringWithFormat:@"%@ %@", compileDate, compileTime];
     
     NSString *fullVersion = [NSString stringWithFormat:@"v%@ (%@)", version, buildTimeStr];
     
+    // ยุบข้อมูลของเซกชันแรกเหลือ Dictionary ชุดเดียวใน Array เพื่อให้วาดออกมาเพียงช่องเดียว
     _tableData = @{
         [NSString stringWithUTF8String:AY_OBFUSCATE("ABOUT")]: @[
             @{@"title": appName, @"bundle": bundleID, @"version": fullVersion, @"build_time": buildTimeStr}
@@ -71,16 +65,8 @@
         ]
     };
     
-    // แก้ไขจุดนี้: ใช้การอินิทรูปแบบเดียวกับ Swift สไตล์ .insetGrouped
-    self.tableView = [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStyleInsetGrouped];
-    
-    // บังคับย้อมสีพื้นหลัง TableView ให้ตรงกับสี View หลักดั้งเดิม 
-    self.tableView.backgroundColor = [UIColor systemBackgroundColor];
-    
-    // เคลียร์เอฟเฟกต์ BackgroundView ที่ติดมากับระบบ Sheet ทิ้งไป
-    self.tableView.backgroundView = [[UIView alloc] init];
-    self.tableView.backgroundView.backgroundColor = [UIColor systemBackgroundColor];
-    
+    self.tableView = [[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStyleInsetGrouped];
+    self.tableView.backgroundColor = [UIColor systemGroupedBackgroundColor];
     self.tableView.separatorColor = [UIColor separatorColor];
     self.tableView.translatesAutoresizingMaskIntoConstraints = NO;
     self.tableView.delegate = self;
